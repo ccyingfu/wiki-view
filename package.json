@@ -1,0 +1,28 @@
+{
+  "name": "wiki-view",
+  "version": "1.0.0",
+  "description": "Wiki-View: My-Wiki 可视化前端",
+  "main": "server/index.js",
+  "scripts": {
+    "server": "node server/index.js",
+    "dev:server": "node server/index.js",
+    "dev:client": "cd client && npm run dev",
+    "dev": "node server/index.js",
+    "build": "cd client && npm run build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "chokidar": "^5.0.0",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "fuse.js": "^7.3.0",
+    "gray-matter": "^4.0.3",
+    "highlight.js": "^11.11.1",
+    "marked": "^18.0.2",
+    "multer": "^2.1.1",
+    "ws": "^8.20.0"
+  }
+}
