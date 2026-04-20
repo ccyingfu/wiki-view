@@ -6,24 +6,7 @@ const fs = require('fs');
 const { getRawPath, getWikiRoot } = require('../utils/path-resolver');
 const taskQueue = require('../services/task-queue');
 
-// 配置 multer 存储
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const subDir = req.body.directory || 'notes';
-    const dest = getRawPath(subDir);
-    if (!fs.existsSync(dest)) {
-      fs.mkdirSync(dest, { recursive: true });
-    }
-    cb(null, dest);
-  },
-  filename: (req, file, cb) => {
-    // 保留原始文件名，支持中文
-    const originalName = Buffer.from(file.originalname, 'latin1').toString('utf-8');
-    cb(null, originalName);
-  }
-});
-
-const upload = multer({ storage });
+const upload = multer({ storage: multer.memoryStorage() });
 
 // POST /api/ingest/upload — 上传文件
 router.post('/upload', upload.single('file'), (req, res) => {
@@ -33,8 +16,14 @@ router.post('/upload', upload.single('file'), (req, res) => {
     }
     const subDir = req.body.directory || 'notes';
     const originalName = Buffer.from(req.file.originalname, 'latin1').toString('utf-8');
+    const destDir = getRawPath(subDir);
+    if (!fs.existsSync(destDir)) {
+      fs.mkdirSync(destDir, { recursive: true });
+    }
+    const destPath = path.join(destDir, originalName);
+    fs.writeFileSync(destPath, req.file.buffer);
+
     const relativePath = `raw/${subDir}/${originalName}`;
-    
     res.json({
       message: 'File uploaded successfully',
       path: relativePath,
